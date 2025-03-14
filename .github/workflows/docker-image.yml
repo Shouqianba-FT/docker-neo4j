@@ -28,11 +28,6 @@ jobs:
         run: make build-debian-community
 
       - name: Push the Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/shouqianba-ft/neo4j:${{ NEO4JVERSION }}-community
+        run: docker push ghcr.io/shouqianba-ft/neo4j:${{ env.NEO4JVERSION }}-community
 
 
