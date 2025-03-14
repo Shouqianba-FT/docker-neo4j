@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEO4JVERSION: 5.26.0
+      SYSTEM: debian
     steps:
       - uses: actions/checkout@v4
         name: Checkout code
@@ -25,7 +26,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the Docker image
-        run: make build-debian-community
+        run: make build-${{ env.SYSTEM }}-community
+
+      - name: Tag the Docker image step 1
+        run: make tag-${{ env.SYSTEM }}-community
+
+      - name: Tag the Docker image step 2
+        run: docker tag neo4j-${{ env.NEO4JVERSION }}-${{ env.SYSTEM }} ghcr.io/shouqianba-ft/neo4j:${{ env.NEO4JVERSION }}-community
 
       - name: Push the Docker image
         run: docker push ghcr.io/shouqianba-ft/neo4j:${{ env.NEO4JVERSION }}-community
