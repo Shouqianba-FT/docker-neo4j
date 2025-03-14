@@ -11,11 +11,28 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env: 
+    env:
       NEO4JVERSION: 5.26.0
-      
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: make build-debian-community
+      - uses: actions/checkout@v4
+        name: Checkout code
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the Docker image
+        run: make build-debian-community
+
+      - name: Push the Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/shouqianba-ft/neo4j:${{ NEO4JVERSION }}-community
+
+
